@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Dental Guide</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    html, body { height: 100%; margin: 0; }
+    .treatment-card:hover { transform: translateY(-4px); }
+    .nav-btn.active { background: #0ea5e9; color: white; }
+    .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .accordion-content.open { max-height: 2000px; }
+    .fade-in { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .tooth-icon { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-gradient-to-br from-sky-50 via-white to-cyan-50">
+  <div id="app" class="h-full w-full overflow-auto"><!-- Header -->
+   <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-sky-100">
+    <div class="max-w-6xl mx-auto px-4 py-4">
+     <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="showHome()">
+       <svg class="w-10 h-10 text-sky-500 tooth-icon" viewbox="0 0 64 64" fill="currentColor"><path d="M32 4c-8 0-14 3-17 8-3 5-3 12-1 18 2 6 5 12 7 18 2 5 4 10 6 12 1 2 3 2 5 0 2-2 4-7 6-12 2-6 5-12 7-18 2-6 2-13-1-18-3-5-9-8-17-8zm-8 16c-2 0-4-2-4-4s2-4 4-4 4 2 4 4-2 4-4 4zm16 0c-2 0-4-2-4-4s2-4 4-4 4 2 4 4-2 4-4 4z" />
+       </svg>
+       <div>
+        <h1 id="site-title" class="text-xl md:text-2xl font-bold text-sky-700">Your Dental Guide</h1>
+        <p class="text-xs text-sky-500 hidden md:block">Easy to understand dental care</p>
+       </div>
+      </div><button onclick="showHome()" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-2 px-4 py-2 rounded-full hover:bg-sky-50 transition-all">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+       </svg><span class="hidden md:inline">Home</span> </button>
+     </div>
+    </div>
+   </header><!-- Main Content -->
+   <main id="main-content" class="max-w-6xl mx-auto px-4 py-8"><!-- Home Page -->
+    <div id="home-page" class="fade-in">
+     <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Understanding Your Dental Care</h2>
+      <p id="welcome-text" class="text-lg text-gray-600 max-w-2xl mx-auto">Simple explanations of dental treatments — no confusing medical words. Learn what to expect at your dentist visit.</p>
+     </div><!-- Category Navigation -->
+     <div class="flex flex-wrap justify-center gap-3 mb-10"><button onclick="filterTreatments('all')" class="nav-btn active px-5 py-2 rounded-full bg-gray-100 text-gray-700 font-semibold transition-all hover:bg-sky-500 hover:text-white">All Treatments</button> <button onclick="filterTreatments('basic')" class="nav-btn px-5 py-2 rounded-full bg-gray-100 text-gray-700 font-semibold transition-all hover:bg-sky-500 hover:text-white">Basic Care</button> <button onclick="filterTreatments('repair')" class="nav-btn px-5 py-2 rounded-full bg-gray-100 text-gray-700 font-semibold transition-all hover:bg-sky-500 hover:text-white">Tooth Repair</button> <button onclick="filterTreatments('replacement')" class="nav-btn px-5 py-2 rounded-full bg-gray-100 text-gray-700 font-semibold transition-all hover:bg-sky-500 hover:text-white">Tooth Replacement</button> <button onclick="filterTreatments('cosmetic')" class="nav-btn px-5 py-2 rounded-full bg-gray-100 text-gray-700 font-semibold transition-all hover:bg-sky-500 hover:text-white">Cosmetic</button>
+     </div><!-- Treatment Cards Grid -->
+     <div id="treatments-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+     </div>
+    </div><!-- Treatment Detail Page -->
+    <div id="treatment-page" class="hidden fade-in"><button onclick="showHome()" class="mb-6 flex items-center gap-2 text-sky-600 hover:text-sky-800 font-semibold group">
+      <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg> Back to All Treatments </button>
+     <div id="treatment-detail"></div>
+    </div>
+   </main><!-- Footer -->
+   <footer class="bg-sky-800 text-white py-8 mt-12">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+     <p class="text-sky-200 mb-2">This guide is for educational purposes only.</p>
+     <p class="text-sky-300 text-sm">Always consult your dentist for personalized advice about your dental health.</p>
+    </div>
+   </footer>
+  </div>
+  <script>
+    // Default configuration
+    const defaultConfig = {
+      site_title: "Your Dental Guide",
+      welcome_message: "Simple explanations of dental treatments — no confusing medical words. Learn what to expect at your dentist visit.",
+      primary_color: "#0ea5e9",
+      secondary_color: "#f0f9ff",
+      text_color: "#1e293b",
+      accent_color: "#0284c7",
+      background_color: "#ffffff"
+    };
+
+    let config = { ...defaultConfig };
+
+    // Treatment data
+    const treatments = [
+      {
+        id: "cleaning",
+        name: "Teeth Cleaning (Scaling)",
+        category: "basic",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><circle cx="32" cy="32" r="28" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2"/><path d="M20 40c4-8 8-20 12-20s8 12 12 20" stroke="#0ea5e9" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="24" cy="28" r="3" fill="#0ea5e9"/><circle cx="40" cy="28" r="3" fill="#0ea5e9"/><path d="M18 44h28" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 2"/></svg>`,
+        shortDesc: "Professional deep cleaning to remove plaque and tartar",
+        data: {
+          whatIsIt: "Teeth cleaning is when your dentist or hygienist removes the hard, stuck-on buildup (called tartar) from your teeth using special tools. Think of it like a car wash for your teeth — but much more thorough than brushing at home.",
+          whyDone: "Even if you brush and floss every day, some sticky stuff (plaque) hardens into tartar that only professional tools can remove. If left alone, this buildup causes cavities, gum disease, and bad breath.",
+          whenNeeded: ["Your gums bleed when brushing", "Bad breath that won't go away", "Teeth feel rough or fuzzy", "Gums look red or swollen", "It's been 6+ months since your last cleaning"],
+          types: [
+            { name: "Regular Cleaning", desc: "For healthy gums — a quick polish and scrape above the gum line" },
+            { name: "Deep Cleaning", desc: "For gum disease — cleaning below the gum line where bacteria hide" }
+          ],
+          steps: [
+            { title: "Examination", desc: "Dentist checks your teeth and gums for problems", icon: "🔍" },
+            { title: "Scaling", desc: "Special tools scrape off tartar from teeth surfaces", icon: "🦷" },
+            { title: "Polishing", desc: "Gritty paste and spinning brush make teeth smooth and shiny", icon: "✨" },
+            { title: "Flossing", desc: "Deep clean between all your teeth", icon: "🧵" },
+            { title: "Rinse", desc: "Wash away all the debris", icon: "💧" }
+          ],
+          painLevel: "Minimal discomfort. You might feel some pressure and slight sensitivity, especially if you have sensitive teeth. Most people find it uncomfortable but not painful. For deep cleaning, numbing gel or local anesthesia is used.",
+          aftercare: ["Mild sensitivity for 1-2 days is normal", "Avoid very hot or cold foods for 24 hours", "Wait 30 minutes before eating", "Gums may be slightly tender", "Resume normal brushing the same day"],
+          ignoreConsequences: "Tartar keeps building up, leading to cavities, gum disease, tooth loss, and even heart problems (bacteria can enter your bloodstream through infected gums).",
+          duration: "You should get cleaned every 6 months. Each cleaning lasts 30-60 minutes.",
+          faq: [
+            { q: "Does teeth cleaning damage enamel?", a: "No! The tools only remove buildup, not your actual tooth surface. Your enamel is much harder than tartar." },
+            { q: "Why do my teeth feel weird after?", a: "Your tongue got used to the rough tartar. Clean teeth actually feel smoother — you'll get used to it in a day!" },
+            { q: "Can I eat right after?", a: "Wait about 30 minutes, especially if fluoride was applied. Then eat normally!" }
+          ]
+        }
+      },
+      {
+        id: "fillings",
+        name: "Dental Fillings",
+        category: "repair",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><path d="M32 8c-12 0-20 8-20 24s8 24 20 24 20-8 20-24S44 8 32 8z" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2"/><ellipse cx="32" cy="28" rx="10" ry="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><path d="M26 26l4 4 8-8" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+        shortDesc: "Repairing cavities by filling the hole in your tooth",
+        data: {
+          whatIsIt: "A filling is like a patch for your tooth. When a cavity (a hole caused by decay) forms, the dentist removes the damaged part and fills the hole with a safe material that hardens and protects your tooth.",
+          whyDone: "Cavities are holes created by bacteria eating through your tooth. Without a filling, the hole gets bigger, reaches the nerve inside, and causes serious pain and infection. A filling stops the damage early.",
+          whenNeeded: ["Tooth pain when eating sweets", "Sensitivity to hot or cold", "Visible holes or dark spots on teeth", "Food keeps getting stuck in one spot", "Pain when biting down"],
+          types: [
+            { name: "Composite (Tooth-Colored)", desc: "Matches your tooth color — best for visible teeth. Costs more but looks natural." },
+            { name: "Amalgam (Silver)", desc: "Very strong and long-lasting — good for back teeth. Less expensive but visible." },
+            { name: "Gold", desc: "Extremely durable but expensive and requires multiple visits." },
+            { name: "Ceramic", desc: "Tooth-colored and very strong, but costs more than composite." }
+          ],
+          steps: [
+            { title: "Numbing", desc: "Injection makes the area completely numb — you won't feel pain", icon: "💉" },
+            { title: "Decay Removal", desc: "Drill removes the damaged, decayed part of tooth", icon: "🔧" },
+            { title: "Cleaning", desc: "The hole is cleaned and prepared for filling", icon: "🧹" },
+            { title: "Filling", desc: "Material is placed in layers and hardened with special light", icon: "💡" },
+            { title: "Shaping", desc: "Dentist shapes and polishes so your bite feels normal", icon: "✨" }
+          ],
+          painLevel: "The numbing injection pinches for a few seconds. After that, you feel pressure but no pain during the procedure. Mild sensitivity for a few days after is normal.",
+          aftercare: ["Numbness wears off in 2-4 hours", "Avoid chewing on that side until numbness is gone", "Mild sensitivity to hot/cold is normal for a few weeks", "Call dentist if pain increases or bite feels off", "Normal brushing and flossing right away"],
+          ignoreConsequences: "The cavity grows larger, eventually reaching the tooth's nerve. This causes severe pain and infection, requiring a root canal or tooth extraction — much more expensive and complicated than a simple filling.",
+          duration: "Fillings last 5-15 years depending on material and care. Composite: 5-7 years. Amalgam: 10-15 years. The procedure takes 20-60 minutes.",
+          faq: [
+            { q: "Will the filling feel different?", a: "At first, yes. Your bite might feel slightly off for a day or two. If it still bothers you after a week, your dentist can adjust it." },
+            { q: "Why does my tooth hurt after getting a filling?", a: "Some sensitivity is normal for a few weeks. The tooth was just worked on! If pain is severe or lasts longer, contact your dentist." },
+            { q: "Can fillings fall out?", a: "Yes, eventually all fillings need replacement. Chewing very hard foods, grinding teeth, or decay around the filling can loosen it." }
+          ]
+        }
+      },
+      {
+        id: "rootcanal",
+        name: "Root Canal",
+        category: "repair",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><path d="M32 6c-10 0-16 6-16 20v12c0 4 2 8 6 12 2 2 4 6 6 8h8c2-2 4-6 6-8 4-4 6-8 6-12V26c0-14-6-20-16-20z" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2"/><path d="M32 18v24M28 42l4 10 4-10" stroke="#ef4444" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="32" cy="26" r="4" fill="#fecaca" stroke="#ef4444" stroke-width="1"/></svg>`,
+        shortDesc: "Saving a badly infected tooth by removing the infected nerve inside",
+        data: {
+          whatIsIt: "Inside each tooth is soft tissue called 'pulp' containing nerves and blood vessels. When this gets infected (usually from a deep cavity), a root canal removes the infected pulp, cleans the inside, and seals it. Think of it as saving a house by removing everything rotten inside and renovating it.",
+          whyDone: "When infection reaches the inner part of your tooth, it causes extreme pain and can spread to your jaw and face. A root canal removes the infection while keeping your natural tooth — the alternative is pulling the tooth out entirely.",
+          whenNeeded: ["Severe toothache, especially when chewing", "Prolonged sensitivity to hot or cold", "Darkening of the tooth", "Swollen, tender gums near the tooth", "Pimple-like bump on the gums", "Pain that wakes you up at night"],
+          types: [
+            { name: "Standard Root Canal", desc: "For front teeth with single roots — simpler procedure" },
+            { name: "Molar Root Canal", desc: "For back teeth with multiple roots — takes longer but same concept" }
+          ],
+          steps: [
+            { title: "X-Ray", desc: "Pictures show the shape of root canals and extent of infection", icon: "📸" },
+            { title: "Numbing", desc: "Local anesthesia makes the tooth completely numb", icon: "💉" },
+            { title: "Access Opening", desc: "Small hole made in top of tooth to reach the inside", icon: "🔓" },
+            { title: "Cleaning", desc: "Infected pulp removed and canals shaped and disinfected", icon: "🧹" },
+            { title: "Filling", desc: "Canals filled with rubber-like material and sealed", icon: "🔒" },
+            { title: "Crown", desc: "Usually a crown is placed later to protect the weakened tooth", icon: "👑" }
+          ],
+          painLevel: "Despite its scary reputation, modern root canals are no more painful than getting a filling! The area is completely numbed. Most people say the pain BEFORE the procedure (from the infection) is far worse than during. Mild soreness for a few days after is normal.",
+          aftercare: ["Take pain relievers as directed", "Avoid chewing on that tooth until crown is placed", "Some tenderness for 2-3 days is normal", "Return for crown placement within a few weeks", "Brush and floss normally"],
+          ignoreConsequences: "The infection spreads, causing abscess (pus-filled pocket), severe facial swelling, bone loss around the tooth, and the infection can spread to other parts of your body. The tooth will eventually need to be extracted.",
+          duration: "The root canal itself lasts 1-2 hours over 1-2 visits. After crown placement, the treated tooth can last a lifetime with proper care.",
+          faq: [
+            { q: "Is root canal really that painful?", a: "No! That's an outdated myth. Modern anesthesia and techniques make it similar to getting a filling. The toothache before treatment is usually far worse." },
+            { q: "Why do I need a crown after?", a: "The tooth becomes brittle after root canal since its blood supply is removed. A crown protects it from cracking." },
+            { q: "Can the infection come back?", a: "Rarely. Success rate is over 95%. If infection returns, retreatment or surgery is possible." }
+          ]
+        }
+      },
+      {
+        id: "extraction",
+        name: "Tooth Extraction",
+        category: "repair",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><circle cx="32" cy="32" r="26" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/><path d="M24 20c0 8 4 16 8 24 4-8 8-16 8-24" fill="#fecaca" stroke="#ef4444" stroke-width="2"/><path d="M20 28l8-4M44 28l-8-4" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/><path d="M26 50l6-6 6 6" stroke="#ef4444" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+        shortDesc: "Removing a tooth that can't be saved",
+        data: {
+          whatIsIt: "Tooth extraction means completely removing a tooth from your mouth. It's the last resort when a tooth is too damaged, decayed, or problematic to save. The dentist loosens the tooth from its socket and removes it.",
+          whyDone: "Some teeth are beyond repair — severe decay, advanced gum disease, cracks extending below the gum line, or crowding. Removing the problem tooth prevents infection from spreading and makes room for healthy teeth or replacements.",
+          whenNeeded: ["Severe tooth decay that can't be fixed with a filling or root canal", "Gum disease that has loosened the tooth", "Broken tooth that can't be repaired", "Crowded teeth (before braces)", "Infection that doesn't respond to antibiotics"],
+          types: [
+            { name: "Simple Extraction", desc: "For visible teeth that can be loosened and pulled out with tools" },
+            { name: "Surgical Extraction", desc: "For teeth broken at gum line or not fully emerged (like wisdom teeth)" }
+          ],
+          steps: [
+            { title: "X-Ray", desc: "Pictures help plan the best removal approach", icon: "📸" },
+            { title: "Numbing", desc: "Injection numbs the tooth, jawbone, and surrounding gums", icon: "💉" },
+            { title: "Loosening", desc: "Special tool rocks the tooth to widen the socket", icon: "↔️" },
+            { title: "Removal", desc: "Forceps grip and lift the tooth out", icon: "🔧" },
+            { title: "Bleeding Control", desc: "Gauze placed to help blood clot form", icon: "🩹" }
+          ],
+          painLevel: "The injection pinches briefly. During extraction, you'll feel pressure and hear some sounds, but no sharp pain. After numbness wears off, expect soreness for 2-3 days — pain medication helps.",
+          aftercare: ["Bite on gauze for 30-45 minutes after", "No spitting, smoking, or using straws for 24 hours (prevents 'dry socket')", "Eat soft, cool foods for a few days", "Don't rinse vigorously for 24 hours", "Ice pack on cheek reduces swelling", "Take prescribed pain medication"],
+          ignoreConsequences: "If a problem tooth isn't removed: infection can spread to jaw and face, causing severe pain and swelling; infection can enter bloodstream (dangerous); nearby teeth shift out of position; bone loss occurs.",
+          duration: "Simple extraction: 20-40 minutes. Healing takes about 1-2 weeks. The bone and gums fully heal in 3-4 months. Consider replacement options (implant, bridge) to prevent teeth shifting.",
+          faq: [
+            { q: "What is 'dry socket'?", a: "After extraction, a blood clot forms in the empty socket. If this clot dislodges (from sucking, spitting, or smoking), the bone is exposed, causing severe pain. Follow aftercare instructions to prevent this!" },
+            { q: "Will I have a gap in my teeth?", a: "Yes, the space remains empty until you get a replacement (implant, bridge, or partial denture). Not replacing missing teeth can cause other teeth to shift." },
+            { q: "How soon can I eat?", a: "Wait until numbness wears off to avoid biting your cheek. Stick to soft foods on the opposite side for 2-3 days." }
+          ]
+        }
+      },
+      {
+        id: "wisdom",
+        name: "Wisdom Tooth Removal",
+        category: "repair",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><path d="M32 4c-12 0-20 8-20 24 0 10 4 18 10 24 2 2 6 6 10 6s8-4 10-6c6-6 10-14 10-24C52 12 44 4 32 4z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><path d="M20 32h24M32 20v24" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="24" r="2" fill="#f59e0b"/><circle cx="40" cy="24" r="2" fill="#f59e0b"/><path d="M24 40l4-4 4 4 4-4 4 4" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+        shortDesc: "Removing the third molars that usually cause problems",
+        data: {
+          whatIsIt: "Wisdom teeth are your third set of molars that appear between ages 17-25 — when you're supposedly 'wiser.' Most people don't have room for them, so they get stuck (impacted), grow sideways, or push against other teeth. Removal is a surgical procedure to take them out before or after problems start.",
+          whyDone: "Our jaws have evolved to be smaller than our ancestors', but we still grow wisdom teeth. When there's no room, these teeth cause pain, infections, damage to neighboring teeth, and cysts. Removing them prevents these problems.",
+          whenNeeded: ["Pain or swelling at the back of your mouth", "Jaw stiffness or difficulty opening mouth", "Bad breath or unpleasant taste", "Gum flap over partially erupted tooth traps food", "X-rays show they're growing toward other teeth", "Repeated infections around the area"],
+          types: [
+            { name: "Simple Extraction", desc: "If the tooth has fully emerged and grown straight" },
+            { name: "Surgical Extraction", desc: "If the tooth is impacted (stuck in bone/gum) — most common" },
+            { name: "Partial Removal", desc: "Just the crown is removed when roots are near nerves — rare cases" }
+          ],
+          steps: [
+            { title: "Consultation", desc: "X-rays and exam to plan surgery", icon: "📋" },
+            { title: "Anesthesia", desc: "Local numbing, sedation, or general anesthesia depending on complexity", icon: "💉" },
+            { title: "Access", desc: "Gum opened and bone removed if tooth is impacted", icon: "🔓" },
+            { title: "Sectioning", desc: "Tooth may be cut into pieces for easier removal", icon: "✂️" },
+            { title: "Removal", desc: "Tooth is taken out", icon: "🦷" },
+            { title: "Closure", desc: "Stitches close the gum (usually dissolving)", icon: "🪡" }
+          ],
+          painLevel: "During: Nothing — you're numbed or sedated. After: Moderate discomfort for 3-5 days, manageable with prescribed pain medication. Swelling and bruising are normal. Most people feel much better after one week.",
+          aftercare: ["Ice packs on cheeks for first 24-48 hours", "Soft foods only (yogurt, soup, smoothies) for several days", "No straws, spitting, or smoking — risk of dry socket!", "Rinse gently with salt water after 24 hours", "Take all medications as prescribed", "Rest for 2-3 days — no strenuous activity"],
+          ignoreConsequences: "Impacted wisdom teeth can: damage adjacent teeth, cause cysts that destroy jawbone, lead to recurring painful infections, contribute to crowding of other teeth, and in rare cases, cause tumors.",
+          duration: "Surgery takes 45-90 minutes. Initial recovery: 3-5 days. Full healing: 2-4 weeks. It's often recommended to remove all four at once to recover just once.",
+          faq: [
+            { q: "Do I need all four removed?", a: "Usually yes, if they're all impacted or problematic. Some people only have 1-3 wisdom teeth, and some have none!" },
+            { q: "What's the best age for removal?", a: "Late teens to early 20s — roots aren't fully formed yet, making removal easier with faster healing. But they can be removed at any age." },
+            { q: "Will my face swell up?", a: "Yes, swelling peaks at days 2-3, then gradually goes down. Ice packs help. Bruising on cheeks is also normal." }
+          ]
+        }
+      },
+      {
+        id: "braces",
+        name: "Braces",
+        category: "cosmetic",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><rect x="10" y="24" width="44" height="16" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/><rect x="16" y="28" width="8" height="8" rx="1" fill="#3b82f6"/><rect x="28" y="28" width="8" height="8" rx="1" fill="#3b82f6"/><rect x="40" y="28" width="8" height="8" rx="1" fill="#3b82f6"/><line x1="10" y1="32" x2="54" y2="32" stroke="#60a5fa" stroke-width="2"/></svg>`,
+        shortDesc: "Straightening crooked teeth with metal or clear brackets",
+        data: {
+          whatIsIt: "Braces are small brackets glued to your teeth, connected by wires. They apply gentle, constant pressure to slowly move teeth into proper position over months or years. It's like training your teeth to stand in a straight line.",
+          whyDone: "Crooked or crowded teeth are harder to clean, causing more cavities and gum disease. Misaligned bites cause jaw pain, uneven wear, and chewing problems. Straight teeth also improve your smile and confidence.",
+          whenNeeded: ["Crowded or overlapping teeth", "Gaps between teeth", "Overbite (top teeth stick out too far)", "Underbite (bottom teeth in front of top)", "Crossbite (some top teeth sit inside bottom teeth)", "Crooked teeth affecting your smile"],
+          types: [
+            { name: "Metal Braces", desc: "Most common — stainless steel brackets and wires. Effective and affordable." },
+            { name: "Ceramic Braces", desc: "Tooth-colored brackets — less visible but slightly more expensive." },
+            { name: "Lingual Braces", desc: "Brackets behind teeth — invisible but harder to clean and adjust." },
+            { name: "Clear Aligners", desc: "Removable plastic trays (like Invisalign) — nearly invisible but not for severe cases." }
+          ],
+          steps: [
+            { title: "Consultation", desc: "X-rays, photos, and impressions to create treatment plan", icon: "📋" },
+            { title: "Bonding", desc: "Brackets glued to each tooth (takes 1-2 hours)", icon: "🔗" },
+            { title: "Wire Placement", desc: "Wire threaded through brackets and secured", icon: "〰️" },
+            { title: "Adjustments", desc: "Monthly visits to tighten and adjust (4-8 weeks apart)", icon: "🔧" },
+            { title: "Removal", desc: "Brackets removed and teeth cleaned when treatment is complete", icon: "✨" },
+            { title: "Retainer", desc: "Retainer given to maintain results (critical!)", icon: "🛡️" }
+          ],
+          painLevel: "Getting braces put on doesn't hurt — just feels strange. For 3-5 days after getting them and after each adjustment, teeth feel sore and pressure-y. Over-the-counter pain relievers help. Your mouth adjusts and discomfort decreases over time.",
+          aftercare: ["Avoid hard, sticky, and chewy foods (popcorn, caramel, hard candy)", "Brush after every meal — food traps easily", "Use special floss threaders or water flossers", "Wear rubber bands if prescribed", "Don't miss adjustment appointments", "Wear your retainer as directed after removal!"],
+          ignoreConsequences: "Not fixing alignment issues leads to: increased cavities and gum disease, worn-down teeth, jaw pain (TMJ), difficulty chewing, and continued dissatisfaction with your smile.",
+          duration: "Treatment typically takes 12-36 months depending on severity. Simple cases: 12-18 months. Complex cases: 24-36 months. After removal, retainers must be worn (initially full-time, then nightly) to prevent teeth from shifting back.",
+          faq: [
+            { q: "Am I too old for braces?", a: "No! Teeth can be moved at any age. Adult braces are increasingly common. Treatment may take slightly longer in adults." },
+            { q: "Do braces hurt?", a: "Placing them doesn't hurt. You'll have soreness for a few days after placement and adjustments. It gets easier as you adjust." },
+            { q: "Can I still play sports?", a: "Yes, but wear a mouthguard designed for braces to protect your lips and brackets." }
+          ]
+        }
+      },
+      {
+        id: "retainers",
+        name: "Retainers",
+        category: "cosmetic",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><path d="M12 32c0-12 10-18 20-18s20 6 20 18" fill="none" stroke="#8b5cf6" stroke-width="3"/><path d="M12 32c0 8 10 14 20 14s20-6 20-14" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/><circle cx="20" cy="32" r="3" fill="#8b5cf6"/><circle cx="32" cy="34" r="3" fill="#8b5cf6"/><circle cx="44" cy="32" r="3" fill="#8b5cf6"/></svg>`,
+        shortDesc: "Keeping your teeth straight after braces come off",
+        data: {
+          whatIsIt: "A retainer is a custom-made device that holds your teeth in their new position after braces. Your teeth have a 'memory' and want to shift back to where they were. A retainer prevents this by keeping them in place while the bone around them stabilizes.",
+          whyDone: "After braces, the bone and tissues around your teeth need time to reform and 'set' in the new position. Without a retainer, teeth will slowly shift back toward their original crooked positions — undoing months or years of treatment.",
+          whenNeeded: ["Immediately after braces are removed", "After clear aligner treatment", "Sometimes recommended even without prior braces to prevent shifting", "If teeth have shifted and you want to maintain current position"],
+          types: [
+            { name: "Hawley Retainer", desc: "Classic type — acrylic plate with wire across front teeth. Adjustable and durable." },
+            { name: "Clear Retainer", desc: "Transparent plastic that fits over teeth like a clear aligner. Nearly invisible." },
+            { name: "Fixed/Permanent Retainer", desc: "Wire bonded behind teeth (usually lower front). Stays in place 24/7." }
+          ],
+          steps: [
+            { title: "Impression", desc: "Mold taken of your teeth (or digital scan)", icon: "🦷" },
+            { title: "Fabrication", desc: "Custom retainer made in a lab", icon: "🏭" },
+            { title: "Fitting", desc: "Retainer adjusted for comfortable fit", icon: "✅" },
+            { title: "Instructions", desc: "You learn how and when to wear it", icon: "📋" }
+          ],
+          painLevel: "No pain! Slight pressure and tightness initially is normal. If a retainer hurts, it may need adjustment.",
+          aftercare: ["Removable: Clean daily with toothbrush and cool water (hot water warps plastic!)", "Store in case when not wearing — never in napkins!", "Fixed: Extra flossing with threaders or water flosser needed", "Bring to dental checkups for inspection", "Replace if lost, cracked, or ill-fitting"],
+          ignoreConsequences: "Teeth WILL shift back without retention. Even a few weeks without wearing your retainer can cause noticeable movement. You may need braces again to fix re-shifted teeth — additional time and expense.",
+          duration: "Wear schedule: Full-time (except eating) for first 3-6 months, then nightly for at least 1-2 years, then several nights per week indefinitely. Many orthodontists recommend lifetime nighttime wear. Fixed retainers can stay in place for years.",
+          faq: [
+            { q: "How long do I have to wear my retainer?", a: "Forever, to some degree! At minimum, nightly wear for a few years. Many people wear retainers several nights a week for life to maintain their results." },
+            { q: "What if my retainer doesn't fit anymore?", a: "Your teeth have shifted. See your orthodontist — you may need a new retainer or brief re-treatment." },
+            { q: "Can I eat with my retainer in?", a: "Remove Hawley and clear retainers before eating. Fixed retainers stay in but avoid very hard/sticky foods." }
+          ]
+        }
+      },
+      {
+        id: "crowns",
+        name: "Dental Crowns",
+        category: "repair",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><path d="M32 8l-6 16-14-4 8 20-8 16h40l-8-16 8-20-14 4z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><circle cx="32" cy="40" r="8" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/></svg>`,
+        shortDesc: "A cap that covers and protects a damaged tooth",
+        data: {
+          whatIsIt: "A crown is a tooth-shaped 'cap' that covers your entire tooth from the gum line up. It's like putting a protective helmet on a damaged tooth. The crown restores the tooth's shape, size, strength, and appearance.",
+          whyDone: "When a tooth is too damaged for a filling to fix — cracked, heavily decayed, worn down, or weakened after root canal — a crown holds it together and protects it from breaking. It also improves appearance for discolored or misshapen teeth.",
+          whenNeeded: ["Large cavity that's too big for a filling", "Cracked or fractured tooth", "After root canal treatment", "Severely worn-down tooth", "To cover a dental implant", "To anchor a bridge", "Badly discolored or misshapen tooth"],
+          types: [
+            { name: "Porcelain/Ceramic", desc: "Best color match — ideal for front teeth. Can chip under heavy biting." },
+            { name: "Porcelain-Fused-to-Metal", desc: "Strong metal base with porcelain coating. Good balance of strength and appearance." },
+            { name: "Gold/Metal", desc: "Extremely durable, lasts longest. Visible gold color — best for back teeth." },
+            { name: "Zirconia", desc: "Very strong ceramic — good for front or back teeth. Increasingly popular." }
+          ],
+          steps: [
+            { title: "Examination", desc: "X-rays and exam to check tooth and root", icon: "🔍" },
+            { title: "Preparation", desc: "Tooth filed down on all sides to make room for crown", icon: "🔧" },
+            { title: "Impression", desc: "Mold taken to create custom crown that fits perfectly", icon: "🦷" },
+            { title: "Temporary Crown", desc: "Plastic temporary placed while permanent crown is made", icon: "⏳" },
+            { title: "Permanent Crown", desc: "New crown checked for fit and color, then cemented in place", icon: "👑" }
+          ],
+          painLevel: "Numbing injection during preparation — you won't feel pain. Mild sensitivity for a few days after is normal. Temporary crown may feel slightly awkward.",
+          aftercare: ["Wait until numbness wears off before eating", "With temporary: avoid sticky foods, chew on opposite side", "Mild sensitivity to hot/cold is normal initially", "Brush and floss normally (be gentle around temporary)", "Contact dentist if crown feels high when biting"],
+          ignoreConsequences: "A damaged tooth without crown protection will likely crack further, get re-infected, or break completely — often requiring extraction. The longer you wait, the less tooth structure remains to save.",
+          duration: "Procedure requires 2 visits over 2-3 weeks. Same-day crowns (CEREC) available at some offices. Crowns last 10-15 years on average. With excellent care, they can last 25-30 years.",
+          faq: [
+            { q: "Will my crown look natural?", a: "Modern ceramic and zirconia crowns are matched to your tooth color — most people can't tell the difference from natural teeth." },
+            { q: "Can crowned teeth get cavities?", a: "The crown itself can't decay, but the tooth underneath can. The margin where crown meets tooth is vulnerable — keep it clean!" },
+            { q: "What if my crown falls off?", a: "Don't panic! Keep it safe, gently clean it, and see your dentist ASAP. They can often recement it." }
+          ]
+        }
+      },
+      {
+        id: "bridges",
+        name: "Dental Bridges",
+        category: "replacement",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><rect x="8" y="26" width="12" height="20" rx="2" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/><rect x="44" y="26" width="12" height="20" rx="2" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/><rect x="26" y="28" width="12" height="16" rx="2" fill="#93c5fd" stroke="#3b82f6" stroke-width="2"/><path d="M20 34h6M38 34h6" stroke="#3b82f6" stroke-width="2"/><path d="M14 22v-6M50 22v-6" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/></svg>`,
+        shortDesc: "False tooth anchored to neighboring teeth to fill a gap",
+        data: {
+          whatIsIt: "A dental bridge literally 'bridges' the gap where a tooth is missing. It consists of one or more false teeth (called pontics) held in place by crowns on the neighboring teeth. The natural teeth on either side act as anchors for the replacement tooth in the middle.",
+          whyDone: "Missing teeth cause surrounding teeth to shift into the gap, changing your bite and appearance. A bridge fills the space, prevents shifting, restores your ability to chew properly, and improves your smile.",
+          whenNeeded: ["One or more missing teeth in a row", "Strong healthy teeth on both sides of the gap", "Want a fixed (non-removable) solution", "Not suitable for or wanting dental implants", "Want to restore smile and chewing function"],
+          types: [
+            { name: "Traditional Bridge", desc: "Most common — crowns on both sides of gap hold false tooth in middle" },
+            { name: "Cantilever Bridge", desc: "False tooth anchored on only one side — for gaps with tooth on only one side" },
+            { name: "Maryland Bridge", desc: "Metal or porcelain wings bond to backs of adjacent teeth — minimal preparation" },
+            { name: "Implant-Supported Bridge", desc: "Anchored by implants instead of natural teeth — for multiple missing teeth" }
+          ],
+          steps: [
+            { title: "Preparation", desc: "Anchor teeth filed down to make room for crowns", icon: "🔧" },
+            { title: "Impression", desc: "Molds taken of prepared teeth and gap", icon: "🦷" },
+            { title: "Temporary Bridge", desc: "Plastic bridge placed while permanent one is made", icon: "⏳" },
+            { title: "Fitting", desc: "Permanent bridge checked for fit, color, and bite", icon: "✅" },
+            { title: "Cementation", desc: "Bridge permanently bonded in place", icon: "🔒" }
+          ],
+          painLevel: "Similar to getting a crown — numbing prevents pain during preparation. Mild soreness for a few days after. Temporary bridge may feel slightly awkward.",
+          aftercare: ["Use floss threaders or water flosser to clean under bridge daily", "Brush bridge like natural teeth", "Avoid very hard or sticky foods", "Regular dental checkups to monitor anchor teeth", "Report any looseness or discomfort immediately"],
+          ignoreConsequences: "Without replacing missing teeth: remaining teeth shift and tilt, bite changes, jaw joint problems, difficulty chewing, bone loss in the gap area, and premature wear on remaining teeth.",
+          duration: "2-3 weeks for permanent bridge (2 visits). Bridges last 5-15 years on average. With excellent care, they can last 15+ years. The anchor teeth need ongoing monitoring.",
+          faq: [
+            { q: "Bridge vs. implant — which is better?", a: "Implants don't affect neighboring teeth and last longer, but cost more and require surgery. Bridges are quicker and less expensive, but require filing down healthy teeth." },
+            { q: "How do I clean under the bridge?", a: "Use a floss threader to get regular floss under the false tooth, or use a water flosser. Special bridge floss is also available." },
+            { q: "What if an anchor tooth gets a cavity?", a: "Cavity must be treated. If severe, the anchor tooth may be lost — and the bridge with it. That's why cleaning around the bridge is crucial." }
+          ]
+        }
+      },
+      {
+        id: "implants",
+        name: "Dental Implants",
+        category: "replacement",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><path d="M32 6c-8 0-12 4-12 12h24c0-8-4-12-12-12z" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2"/><rect x="28" y="18" width="8" height="8" fill="#94a3b8" stroke="#64748b" stroke-width="2"/><path d="M30 26l-2 32M34 26l2 32M28 34h8M28 42h8M28 50h8" stroke="#64748b" stroke-width="2"/></svg>`,
+        shortDesc: "Artificial tooth root surgically placed in jawbone",
+        data: {
+          whatIsIt: "A dental implant is a titanium screw placed into your jawbone to act as an artificial tooth root. Once healed, a connector piece (abutment) and crown are attached, creating a replacement tooth that looks and functions like a natural one. It's the closest thing to growing a new tooth.",
+          whyDone: "Implants replace missing teeth without affecting neighboring teeth (unlike bridges). They prevent bone loss that happens when a tooth is missing, maintain facial structure, and provide the most natural-looking and feeling tooth replacement available.",
+          whenNeeded: ["One or more missing teeth", "Jawbone has finished growing (adults)", "Adequate bone density (or willing to get bone graft)", "Healthy gums", "Want a permanent solution", "Don't want removable dentures"],
+          types: [
+            { name: "Single Implant", desc: "One implant + crown to replace one tooth" },
+            { name: "Implant Bridge", desc: "Two implants support a bridge for multiple missing teeth" },
+            { name: "All-on-4", desc: "Four implants support a full arch of teeth — alternative to full dentures" },
+            { name: "Mini Implants", desc: "Smaller implants for narrow spaces or to stabilize dentures" }
+          ],
+          steps: [
+            { title: "Consultation", desc: "3D scans and planning to ensure adequate bone", icon: "📋" },
+            { title: "Bone Graft", desc: "If needed, bone added to strengthen jaw (adds months to process)", icon: "🦴" },
+            { title: "Implant Placement", desc: "Titanium post surgically placed in jawbone", icon: "🔩" },
+            { title: "Healing", desc: "3-6 months for bone to fuse with implant (osseointegration)", icon: "⏳" },
+            { title: "Abutment", desc: "Connector piece attached to implant", icon: "🔗" },
+            { title: "Crown", desc: "Custom tooth attached — treatment complete!", icon: "👑" }
+          ],
+          painLevel: "Surgery is done under local anesthesia — you feel pressure but no pain. Post-surgery: moderate discomfort, swelling, and bruising for about a week. Pain medication prescribed. Most people say it's easier than expected.",
+          aftercare: ["Soft foods for first week after surgery", "No smoking — significantly reduces success rate", "Gentle brushing around surgical site", "Ice packs for swelling", "Take antibiotics and pain medication as prescribed", "Once healed: brush, floss, and regular checkups like natural teeth"],
+          ignoreConsequences: "Missing teeth cause: bone loss (jaw shrinks), remaining teeth shift, bite changes, difficulty chewing, speech changes, facial appearance changes (sunken look), and lower self-confidence.",
+          duration: "Full process: 3-9 months from start to final crown. If bone graft needed: add 3-6 months. But once complete, implants can last a lifetime with proper care. Crown may need replacement every 10-15 years.",
+          faq: [
+            { q: "Am I too old for implants?", a: "Age isn't a barrier — health is. Many people in their 70s and 80s successfully get implants. Your dentist will assess your overall health and bone quality." },
+            { q: "What's the success rate?", a: "About 95-98%. Smoking and certain conditions (diabetes, osteoporosis) can lower success rates." },
+            { q: "Why do implants cost so much?", a: "They're surgical procedures using precision-manufactured titanium components and custom crowns. While expensive upfront, they often last decades — better long-term value than repeatedly replacing bridges or dentures." }
+          ]
+        }
+      },
+      {
+        id: "dentures",
+        name: "Dentures",
+        category: "replacement",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><path d="M10 32c0-12 10-20 22-20s22 8 22 20" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/><path d="M10 32c0 10 10 18 22 18s22-8 22-18" fill="#fbcfe8" stroke="#ec4899" stroke-width="2"/><rect x="16" y="28" width="6" height="10" rx="1" fill="white" stroke="#ec4899"/><rect x="24" y="26" width="6" height="12" rx="1" fill="white" stroke="#ec4899"/><rect x="34" y="26" width="6" height="12" rx="1" fill="white" stroke="#ec4899"/><rect x="42" y="28" width="6" height="10" rx="1" fill="white" stroke="#ec4899"/></svg>`,
+        shortDesc: "Removable replacement for missing teeth",
+        data: {
+          whatIsIt: "Dentures are removable appliances with artificial teeth attached to a gum-colored base. They replace missing teeth and surrounding tissues. Full dentures replace all teeth; partial dentures fill gaps when some natural teeth remain. Think of them as comfortable, functional 'replacement teeth' you can take in and out.",
+          whyDone: "When many or all teeth are missing, dentures restore your ability to eat, speak clearly, and smile confidently. They support facial muscles that would otherwise sag, helping maintain a more youthful appearance.",
+          whenNeeded: ["Many missing teeth", "Remaining teeth are unhealthy and need removal", "Can't afford or aren't candidates for implants", "Want a non-surgical option", "Need to improve chewing and appearance"],
+          types: [
+            { name: "Full Dentures", desc: "Replace all teeth in upper or lower jaw (or both)" },
+            { name: "Partial Dentures", desc: "Fill gaps when some natural teeth remain — clasp onto existing teeth" },
+            { name: "Immediate Dentures", desc: "Placed right after teeth are removed — temporary while gums heal" },
+            { name: "Implant-Supported Dentures", desc: "Snap onto implants for better stability — don't slip" }
+          ],
+          steps: [
+            { title: "Impressions", desc: "Molds taken of your mouth and jaw measurements", icon: "🦷" },
+            { title: "Wax Model", desc: "Trial dentures made to test fit, appearance, and bite", icon: "🕯️" },
+            { title: "Adjustments", desc: "Changes made based on trial fitting", icon: "🔧" },
+            { title: "Final Dentures", desc: "Permanent dentures crafted and fitted", icon: "✨" },
+            { title: "Follow-up", desc: "Additional adjustments as you adapt", icon: "📋" }
+          ],
+          painLevel: "Getting fitted is painless. New dentures feel strange and may cause sore spots for the first few weeks. Your mouth needs time to adjust. Denture adhesive helps with stability.",
+          aftercare: ["Remove and clean daily with denture brush and cleaner (not regular toothpaste!)", "Soak overnight in water or denture solution", "Clean your gums, tongue, and any remaining teeth", "Handle carefully — dentures are fragile", "See dentist for regular checkups and adjustments", "Don't sleep with dentures in (unless instructed)"],
+          ignoreConsequences: "Without replacing missing teeth: bone loss accelerates, remaining teeth shift, facial appearance changes (sunken cheeks), difficulty eating nutritious foods, speech problems, and reduced quality of life.",
+          duration: "Fitting process: 3-6 weeks. Getting used to them: 2-4 weeks. Dentures typically need replacement or relining every 5-10 years as your mouth shape changes. Implant-supported dentures last longer.",
+          faq: [
+            { q: "Will people know I'm wearing dentures?", a: "Modern dentures are very natural-looking. With well-fitting dentures, most people won't notice." },
+            { q: "Can I eat normally?", a: "Yes, with practice! Start with soft foods cut into small pieces. Chew evenly on both sides. Avoid very sticky or hard foods." },
+            { q: "Will they slip or fall out?", a: "Initially, facial muscles need to learn to hold them. Denture adhesive helps. Implant-supported dentures virtually eliminate slipping." }
+          ]
+        }
+      },
+      {
+        id: "veneers",
+        name: "Veneers",
+        category: "cosmetic",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><rect x="18" y="16" width="12" height="32" rx="3" fill="white" stroke="#a855f7" stroke-width="2"/><rect x="34" y="16" width="12" height="32" rx="3" fill="white" stroke="#a855f7" stroke-width="2"/><path d="M18 16h12v32h-12z" fill="#f3e8ff" opacity="0.6"/><path d="M34 16h12v32h-12z" fill="#f3e8ff" opacity="0.6"/><path d="M12 32l6-4v8zM52 32l-6-4v8z" fill="#a855f7"/></svg>`,
+        shortDesc: "Thin shells that cover front of teeth for a perfect smile",
+        data: {
+          whatIsIt: "Veneers are super-thin, custom-made shells (like fake fingernails for teeth) that cover the front surface of your teeth. They're bonded permanently to change the color, shape, size, or length of teeth. It's like giving your teeth a beautiful new 'face.'",
+          whyDone: "Veneers can transform your smile by fixing: discolored teeth that whitening can't help, chipped or worn teeth, misshapen teeth, uneven spacing, and minor alignment issues. They provide a dramatic cosmetic improvement with minimal tooth alteration.",
+          whenNeeded: ["Severely discolored or stained teeth", "Chipped, broken, or worn teeth", "Gaps between teeth", "Misshapen or uneven teeth", "Slightly crooked teeth (mild cases)", "Want a Hollywood-style smile makeover"],
+          types: [
+            { name: "Porcelain Veneers", desc: "Strong, stain-resistant, most natural-looking. Last 10-20 years." },
+            { name: "Composite Veneers", desc: "Less expensive, applied in one visit. Last 5-7 years." },
+            { name: "No-Prep Veneers", desc: "Ultra-thin, minimal tooth reduction needed. Not suitable for all cases." }
+          ],
+          steps: [
+            { title: "Consultation", desc: "Discuss goals, take photos, possibly try on temporary 'preview'", icon: "💬" },
+            { title: "Preparation", desc: "Thin layer of enamel removed from front of teeth", icon: "🔧" },
+            { title: "Impression", desc: "Molds sent to lab to create custom veneers", icon: "🦷" },
+            { title: "Temporary Veneers", desc: "Worn while permanent ones are made (1-2 weeks)", icon: "⏳" },
+            { title: "Bonding", desc: "Veneers permanently attached with special cement and light", icon: "✨" }
+          ],
+          painLevel: "Minimal. Preparation may cause sensitivity, so numbing is often used. After placement, some sensitivity for a few days is normal. Not painful.",
+          aftercare: ["Avoid biting very hard objects (ice, fingernails, pens)", "Don't use teeth as tools", "Wear a nightguard if you grind teeth", "Brush and floss normally", "Regular dental checkups", "Porcelain won't stain, but edges can"],
+          ignoreConsequences: "If you have cosmetic concerns affecting your confidence, not addressing them impacts quality of life. However, veneers are elective — ignoring them doesn't cause health problems. The underlying issues (stains, chips) may worsen over time.",
+          duration: "Procedure takes 2-3 visits over 2-4 weeks. Porcelain veneers last 10-20 years. Composite veneers last 5-7 years. They eventually need replacement due to wear or gum recession.",
+          faq: [
+            { q: "Do veneers damage your teeth?", a: "A thin layer of enamel is removed — this is permanent. However, the veneer then protects that surface. It's a trade-off for the cosmetic benefit." },
+            { q: "Can I whiten veneers?", a: "No. Veneers don't respond to whitening. The color is set when made. If surrounding teeth are whitened later, they may no longer match." },
+            { q: "How do I know what they'll look like?", a: "Many dentists offer digital previews or temporary 'trial smile' veneers so you can see and approve the look before committing." }
+          ]
+        }
+      },
+      {
+        id: "whitening",
+        name: "Teeth Whitening",
+        category: "cosmetic",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><path d="M32 8c-10 0-16 6-16 18s6 20 16 30c10-10 16-18 16-30S42 8 32 8z" fill="white" stroke="#fbbf24" stroke-width="2"/><circle cx="32" cy="28" r="12" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/><path d="M28 26l4 4 6-8" stroke="#f59e0b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 8l4 8M44 8l-4 8M32 0v10" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"/></svg>`,
+        shortDesc: "Making your teeth several shades whiter",
+        data: {
+          whatIsIt: "Teeth whitening uses special bleaching agents (usually hydrogen peroxide or carbamide peroxide) to break down stains and lighten the color of your teeth. It's like a deep cleaning that targets the discoloration inside and on your enamel.",
+          whyDone: "Over time, teeth yellow from coffee, tea, wine, tobacco, certain foods, medications, and simply aging. Whitening removes years of staining, brightening your smile and boosting confidence. It's one of the simplest cosmetic improvements available.",
+          whenNeeded: ["Yellowed or stained teeth", "Want a brighter smile for a special event", "Discoloration from coffee, tea, wine, or tobacco", "Natural aging has dulled your teeth", "Want to look younger and more vibrant"],
+          types: [
+            { name: "In-Office Whitening", desc: "Strongest option. Done by dentist in one hour. Most dramatic results." },
+            { name: "Take-Home Trays", desc: "Custom trays with professional-strength gel. Use at home for 1-2 weeks." },
+            { name: "Whitening Strips", desc: "Over-the-counter option. Moderate results. Most affordable." },
+            { name: "Whitening Toothpaste", desc: "Removes surface stains only. Maintenance, not dramatic change." }
+          ],
+          steps: [
+            { title: "Cleaning", desc: "Teeth cleaned to remove plaque and debris", icon: "🧹" },
+            { title: "Protection", desc: "Gums and lips protected from whitening gel", icon: "🛡️" },
+            { title: "Application", desc: "Whitening gel applied to teeth", icon: "💧" },
+            { title: "Activation", desc: "Special light may accelerate the process", icon: "💡" },
+            { title: "Repeat", desc: "Process repeated 2-3 times in one session (for in-office)", icon: "🔄" }
+          ],
+          painLevel: "Whitening doesn't hurt, but many people experience temporary sensitivity to hot and cold during and after treatment. This usually goes away within a few days. Sensitivity toothpaste helps.",
+          aftercare: ["Avoid staining foods/drinks for 48 hours (coffee, red wine, berries)", "Use a straw for dark drinks", "Don't smoke", "Use sensitivity toothpaste if needed", "Touch-up treatments maintain results", "Results fade over time — maintenance needed"],
+          ignoreConsequences: "No health consequences — this is purely cosmetic. Stains may continue to accumulate, making teeth appear more yellow over time.",
+          duration: "In-office: 1-2 hours, results immediately. Take-home: 1-2 weeks of daily use. Results last 6 months to 2 years depending on habits. Touch-ups extend results.",
+          faq: [
+            { q: "Will whitening damage my enamel?", a: "When done properly, no. Professional whitening is safe. Overuse of harsh products can cause sensitivity, so follow instructions." },
+            { q: "Why didn't my crown/filling whiten?", a: "Whitening only works on natural teeth. Crowns, fillings, and veneers don't respond. They may need replacement to match whitened teeth." },
+            { q: "How white can my teeth get?", a: "Results vary based on original color and stain type. Most people get 2-8 shades whiter. There's a natural limit — teeth don't become 'pure white.'" }
+          ]
+        }
+      },
+      {
+        id: "gum",
+        name: "Gum Disease Treatment",
+        category: "basic",
+        icon: `<svg viewBox="0 0 64 64" class="w-16 h-16"><path d="M8 36c0-8 10-14 24-14s24 6 24 14c0 10-10 18-24 18S8 46 8 36z" fill="#fecaca" stroke="#ef4444" stroke-width="2"/><rect x="20" y="20" width="8" height="20" rx="2" fill="white" stroke="#dc2626" stroke-width="1"/><rect x="36" y="20" width="8" height="20" rx="2" fill="white" stroke="#dc2626" stroke-width="1"/><path d="M16 44l8-4M48 44l-8-4" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/></svg>`,
+        shortDesc: "Treating infection in the gums that support your teeth",
+        data: {
+          whatIsIt: "Gum disease (periodontal disease) is an infection of the tissues holding your teeth in place. It starts with bacteria in plaque irritating your gums, causing inflammation. Without treatment, it destroys the bone supporting teeth, leading to tooth loss. Treatment removes the infection and helps gums heal.",
+          whyDone: "Gum disease is the leading cause of tooth loss in adults. It's linked to heart disease, diabetes, and other health problems. Treating it saves your teeth, improves overall health, and stops bad breath caused by the infection.",
+          whenNeeded: ["Bleeding gums when brushing or flossing", "Red, swollen, or tender gums", "Gums pulling away from teeth", "Persistent bad breath", "Loose teeth", "Pus between teeth and gums", "Changes in how teeth fit together"],
+          types: [
+            { name: "Gingivitis (Mild)", desc: "Early stage — only gums affected. Reversible with cleaning and better hygiene." },
+            { name: "Periodontitis (Advanced)", desc: "Bone damage has begun. Requires deep cleaning or surgery. Manageable but not reversible." }
+          ],
+          steps: [
+            { title: "Evaluation", desc: "Measure 'pockets' between teeth and gums, take X-rays", icon: "📏" },
+            { title: "Deep Cleaning", desc: "Scaling removes tartar above and below gum line", icon: "🧹" },
+            { title: "Root Planing", desc: "Smooths root surfaces so gums can reattach", icon: "✨" },
+            { title: "Medication", desc: "Antibiotic gel or pills may be prescribed", icon: "💊" },
+            { title: "Follow-up", desc: "Re-evaluation in 4-6 weeks. Surgery if not improved.", icon: "📋" },
+            { title: "Surgery (if needed)", desc: "Flap surgery, bone grafts, or tissue grafts for severe cases", icon: "🔧" }
+          ],
+          painLevel: "Deep cleaning is done with local anesthesia — you won't feel pain. Some soreness and sensitivity for a few days after. Gums may bleed slightly. Surgery requires more recovery time.",
+          aftercare: ["Excellent brushing and flossing — this is crucial!", "Use prescribed mouthwash or antibiotics", "Quit smoking — it significantly worsens gum disease", "More frequent dental visits (every 3-4 months)", "Eat a healthy diet", "Manage diabetes if applicable"],
+          ignoreConsequences: "Gum disease WILL progress if untreated. Pockets deepen, bone loss continues, teeth become loose and eventually fall out or need extraction. The bacteria can enter your bloodstream, contributing to heart disease, stroke, and complications for diabetics.",
+          duration: "Deep cleaning: 1-2 visits, 1-2 hours each. Surgery recovery: 2-4 weeks. Gum disease is a chronic condition — ongoing maintenance is required to prevent recurrence. Regular 3-4 month cleanings for life.",
+          faq: [
+            { q: "Can gum disease be cured?", a: "Early gingivitis can be reversed completely. Advanced periodontitis can be controlled and managed, but bone loss is permanent — the goal is stopping further damage." },
+            { q: "Is gum disease contagious?", a: "The bacteria can be shared through saliva, but not everyone develops disease. Good hygiene protects you." },
+            { q: "Why do my gums bleed?", a: "Bleeding gums = inflammation from bacteria. It's NOT normal and is often the first sign of gum disease. Don't ignore it!" }
+          ]
+        }
+      }
+    ];
+
+    // Initialize SDK
+    async function initApp() {
+      if (window.elementSdk) {
+        await window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (newConfig) => {
+            Object.assign(config, newConfig);
+            updateUI();
+          },
+          mapToCapabilities: (cfg) => ({
+            recolorables: [
+              { get: () => cfg.primary_color || defaultConfig.primary_color, set: (v) => { cfg.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); } },
+              { get: () => cfg.secondary_color || defaultConfig.secondary_color, set: (v) => { cfg.secondary_color = v; window.elementSdk.setConfig({ secondary_color: v }); } },
+              { get: () => cfg.text_color || defaultConfig.text_color, set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+              { get: () => cfg.accent_color || defaultConfig.accent_color, set: (v) => { cfg.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } },
+              { get: () => cfg.background_color || defaultConfig.background_color, set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); } }
+            ],
+            borderables: [],
+            fontEditable: {
+              get: () => cfg.font_family || 'Nunito',
+              set: (v) => { cfg.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+            },
+            fontSizeable: {
+              get: () => cfg.font_size || 16,
+              set: (v) => { cfg.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+            }
+          }),
+          mapToEditPanelValues: (cfg) => new Map([
+            ["site_title", cfg.site_title || defaultConfig.site_title],
+            ["welcome_message", cfg.welcome_message || defaultConfig.welcome_message]
+          ])
+        });
+        config = window.elementSdk.config || config;
+      }
+      renderTreatmentCards();
+      updateUI();
+    }
+
+    function updateUI() {
+      const siteTitle = document.getElementById('site-title');
+      const welcomeText = document.getElementById('welcome-text');
+      
+      if (siteTitle) siteTitle.textContent = config.site_title || defaultConfig.site_title;
+      if (welcomeText) welcomeText.textContent = config.welcome_message || defaultConfig.welcome_message;
+      
+      // Apply font
+      const fontFamily = config.font_family || 'Nunito';
+      document.body.style.fontFamily = `${fontFamily}, sans-serif`;
+      
+      // Apply font size
+      const baseSize = config.font_size || 16;
+      document.documentElement.style.fontSize = `${baseSize}px`;
+    }
+
+    function renderTreatmentCards() {
+      const grid = document.getElementById('treatments-grid');
+      grid.innerHTML = treatments.map(t => `
+        <div class="treatment-card cursor-pointer bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100" 
+             data-category="${t.category}" onclick="showTreatment('${t.id}')">
+          <div class="p-6">
+            <div class="flex items-start gap-4 mb-4">
+              <div class="flex-shrink-0">${t.icon}</div>
+              <div>
+                <h3 class="font-bold text-lg text-gray-800 mb-1">${t.name}</h3>
+                <span class="inline-block px-3 py-1 bg-sky-100 text-sky-700 text-xs font-semibold rounded-full">${getCategoryLabel(t.category)}</span>
+              </div>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">${t.shortDesc}</p>
+            <div class="mt-4 flex items-center text-sky-600 font-semibold text-sm group">
+              Learn more 
+              <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function getCategoryLabel(cat) {
+      const labels = {
+        basic: 'Basic Care',
+        repair: 'Tooth Repair',
+        replacement: 'Replacement',
+        cosmetic: 'Cosmetic'
+      };
+      return labels[cat] || cat;
+    }
+
+    function filterTreatments(category) {
+      // Update active button
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // Filter cards
+      document.querySelectorAll('.treatment-card').forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+          card.style.display = 'block';
+          card.classList.add('fade-in');
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function showHome() {
+      document.getElementById('home-page').classList.remove('hidden');
+      document.getElementById('treatment-page').classList.add('hidden');
+      document.getElementById('home-page').classList.add('fade-in');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showTreatment(id) {
+      const treatment = treatments.find(t => t.id === id);
+      if (!treatment) return;
+
+      document.getElementById('home-page').classList.add('hidden');
+      document.getElementById('treatment-page').classList.remove('hidden');
+      
+      const detail = document.getElementById('treatment-detail');
+      detail.innerHTML = renderTreatmentDetail(treatment);
+      detail.classList.add('fade-in');
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderTreatmentDetail(t) {
+      const d = t.data;
+      return `
+        <div class="bg-white rounded-3xl shadow-lg overflow-hidden">
+          <!-- Header -->
+          <div class="bg-gradient-to-r from-sky-500 to-cyan-400 p-8 text-white">
+            <div class="flex items-center gap-6">
+              <div class="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">${t.icon}</div>
+              <div>
+                <span class="inline-block px-3 py-1 bg-white/20 text-white text-sm font-semibold rounded-full mb-2">${getCategoryLabel(t.category)}</span>
+                <h1 class="text-3xl md:text-4xl font-bold">${t.name}</h1>
+                <p class="text-sky-100 mt-2 text-lg">${t.shortDesc}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 md:p-8 space-y-8">
+            <!-- What Is It -->
+            <section>
+              <h2 class="flex items-center gap-3 text-xl font-bold text-gray-800 mb-4">
+                <span class="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center text-sky-600">❓</span>
+                What Is It?
+              </h2>
+              <p class="text-gray-700 leading-relaxed text-lg bg-sky-50 p-4 rounded-xl">${d.whatIsIt}</p>
+            </section>
+
+            <!-- Why Done -->
+            <section>
+              <h2 class="flex items-center gap-3 text-xl font-bold text-gray-800 mb-4">
+                <span class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">✅</span>
+                Why Is It Done?
+              </h2>
+              <p class="text-gray-700 leading-relaxed">${d.whyDone}</p>
+            </section>
+
+            <!-- When Needed -->
+            <section>
+              <h2 class="flex items-center gap-3 text-xl font-bold text-gray-800 mb-4">
+                <span class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">⚠️</span>
+                Signs You Might Need This
+              </h2>
+              <ul class="grid md:grid-cols-2 gap-3">
+                ${d.whenNeeded.map(s => `
+                  <li class="flex items-start gap-3 bg-amber-50 p-3 rounded-lg">
+                    <span class="text-amber-500 mt-0.5">•</span>
+                    <span class="text-gray-700">${s}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </section>
+
+            <!-- Types -->
+            <section>
+              <h2 class="flex items-center gap-3 text-xl font-bold text-gray-800 mb-4">
+                <span class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">📋</span>
+                Types & Options
+              </h2>
+              <div class="grid md:grid-cols-2 gap-4">
+                ${d.types.map(type => `
+                  <div class="bg-purple-50 p-4 rounded-xl border border-purple-100">
+                    <h3 class="font-bold text-purple-800 mb-2">${type.name}</h3>
+                    <p class="text-gray-600 text-sm">${type.desc}</p>
+                  </div>
+                `).join('')}
+              </div>
+            </section>
+
+            <!-- Steps -->
+            <section>
+              <h2 class="flex items-center gap-3 text-xl font-bold text-gray-800 mb-4">
+                <span class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">📝</span>
+                What Happens During the Procedure
+              </h2>
+              <div class="relative">
+                <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-blue-200"></div>
+                <div class="space-y-4">
+                  ${d.steps.map((step, i) => `
+                    <div class="flex items-start gap-4 relative">
+                      <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold flex-shrink-0 relative z-10">${step.icon}</div>
+                      <div class="bg-blue-50 p-4 rounded-xl flex-1">
+                        <h3 class="font-bold text-blue-800">Step ${i + 1}: ${step.title}</h3>
+                        <p class="text-gray-600 text-sm mt-1">${step.desc}</p>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </section>
+
+            <!-- Pain Level -->
+            <section>
+              <h2 class="flex items-center gap-3 text-xl font-bold text-gray-800 mb-4">
+                <span class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-red-500">💉</span>
+                Pain Level & What to Expect
+              </h2>
+              <div class="bg-gradient-to-r from-red-50 to-orange-50 p-5 rounded-xl border border-red-100">
+                <p class="text-gray-700">${d.painLevel}</p>
+              </div>
+            </section>
+
+            <!-- Aftercare -->
+            <section>
+              <h2 class="flex items-center gap-3 text-xl font-bold text-gray-800 mb-4">
+                <span class="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center text-teal-600">🏥</span>
+                After the Procedure
+              </h2>
+              <ul class="space-y-2">
+                ${d.aftercare.map(a => `
+                  <li class="flex items-start gap-3 p-3 bg-teal-50 rounded-lg">
+                    <span class="text-teal-500 text-lg">✓</span>
+                    <span class="text-gray-700">${a}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </section>
+
+            <!-- Consequences -->
+            <section>
+              <h2 class="flex items-center gap-3 text-xl font-bold text-gray-800 mb-4">
+                <span class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-red-600">🚨</span>
+                What Happens If You Don't Get This Treated?
+              </h2>
+              <div class="bg-red-50 p-5 rounded-xl border-l-4 border-red-400">
+                <p class="text-gray-700">${d.ignoreConsequences}</p>
+              </div>
+            </section>
+
+            <!-- Duration -->
+            <section>
+              <h2 class="flex items-center gap-3 text-xl font-bold text-gray-800 mb-4">
+                <span class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">⏱️</span>
+                How Long Does It Last?
+              </h2>
+              <div class="bg-indigo-50 p-5 rounded-xl">
+                <p class="text-gray-700">${d.duration}</p>
+              </div>
+            </section>
+
+            <!-- FAQ -->
+            <section>
+              <h2 class="flex items-center gap-3 text-xl font-bold text-gray-800 mb-4">
+                <span class="w-10 h-10 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600">💬</span>
+                Frequently Asked Questions
+              </h2>
+              <div class="space-y-3">
+                ${d.faq.map((f, i) => `
+                  <div class="border border-gray-200 rounded-xl overflow-hidden">
+                    <button onclick="toggleAccordion(${i})" class="w-full p-4 text-left flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors">
+                      <span class="font-semibold text-gray-800">${f.q}</span>
+                      <svg class="w-5 h-5 text-gray-500 accordion-arrow-${i} transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div id="accordion-${i}" class="accordion-content">
+                      <p class="p-4 text-gray-600 bg-white">${f.a}</p>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </section>
+
+            <!-- Call to Action -->
+            <section class="bg-gradient-to-r from-sky-500 to-cyan-400 p-6 rounded-2xl text-white text-center">
+              <h3 class="text-xl font-bold mb-2">Have Questions?</h3>
+              <p class="text-sky-100 mb-4">Talk to your dentist about whether ${t.name.toLowerCase()} is right for you.</p>
+              <p class="text-sky-200 text-sm">This guide is for education only — your dentist knows your specific situation best.</p>
+            </section>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleAccordion(index) {
+      const content = document.getElementById(`accordion-${index}`);
+      const arrow = document.querySelector(`.accordion-arrow-${index}`);
+      
+      if (content.classList.contains('open')) {
+        content.classList.remove('open');
+        arrow.style.transform = 'rotate(0deg)';
+      } else {
+        content.classList.add('open');
+        arrow.style.transform = 'rotate(180deg)';
+      }
+    }
+
+    // Initialize
+    initApp();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d21aef407948c19',t:'MTc3MTc5Njg2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
